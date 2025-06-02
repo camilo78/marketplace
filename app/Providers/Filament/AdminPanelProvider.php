@@ -17,8 +17,8 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
-use BezhanSalleh\FilamentLanguageSwitch\Enums\Placement;
+use Shanerbaner82\PanelRoles\PanelRoles;
+
 
 class AdminPanelProvider extends PanelProvider
 {

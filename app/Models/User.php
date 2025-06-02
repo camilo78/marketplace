@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Storage; // Para acceder al disco de almacenamien
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
-    use HasFactory, Notifiable, SoftDeletes; // HasAvatar aquí no es un trait, es una interfaz que se implementa
+    use HasFactory, Notifiable, SoftDeletes;
+    // HasAvatar aquí no es un trait, es una interfaz que se implementa
 
     /**
      * The attributes that are mass assignable.
@@ -61,7 +62,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar
             if (filter_var($this->photo, FILTER_VALIDATE_URL)) {
                 return $this->photo;
             }
-            return Storage::disk('public')->url($this->photo);
+            return asset('storage/' . $this->photo);
         }
         if ($this->email) {
             return 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($this->email))) . '?d=identicon'; // 'identicon' genera un avatar único
