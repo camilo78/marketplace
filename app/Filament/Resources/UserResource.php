@@ -3,37 +3,34 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group'; 
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
     public static function getNavigationLabel(): string
-{
-    return __('custom.user.navigation_label');
-}
+    {
+        return __('custom.user.navigation_label');
+    }
 
-public static function getModelLabel(): string
-{
-    return __('custom.user.label');
-}
+    public static function getModelLabel(): string
+    {
+        return __('custom.user.label');
+    }
 
-public static function getPluralModelLabel(): string
-{
-    return __('custom.user.plural_label');
-}
+    public static function getPluralModelLabel(): string
+    {
+        return __('custom.user.plural_label');
+    }
 
     public static function form(Form $form): Form
     {
@@ -66,6 +63,14 @@ public static function getPluralModelLabel(): string
                     ->visible(fn($livewire) => $livewire instanceof Pages\CreateUser || $livewire instanceof Pages\EditUser)
                     ->dehydrated(fn($state) => filled($state)) // <-- Solo guarda si hay valor
                     ->label(__('Password (leave blank to not change)')),
+                Forms\Components\Select::make('roles')
+                    ->multiple() // Permite asignar más de un rol
+                    ->relationship('roles', 'name') // Usa la relación 'roles' y muestra el campo 'name'
+                    ->preload() // Precarga las opciones para mejor rendimiento
+                    ->searchable()
+                    ->label('Roles')
+                    // @intelephense-ignore-next-line
+                    ->visible(fn() => auth()->user()?->hasRole('superadmin'))
             ]);
     }
 
@@ -96,7 +101,13 @@ public static function getPluralModelLabel(): string
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->toggleable(isToggledHiddenByDefault: true)
-                    ->sortable()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge() // Muestra los roles como insignias
+                    ->searchable()
+                    // @intelephense-ignore-next-line
+                    ->visible(fn() => auth()->user()?->hasRole('superadmin')),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),

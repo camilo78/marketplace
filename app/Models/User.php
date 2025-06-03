@@ -9,11 +9,11 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Filament\Models\Contracts\HasAvatar; // Interfaz para la funcionalidad del avatar
 use Filament\Models\Contracts\FilamentUser; // Interfaz para el usuario de Filament
-use Illuminate\Support\Facades\Storage; // Para acceder al disco de almacenamiento
+use Spatie\Permission\Traits\HasRoles; // Trait para roles y permisos
 
 class User extends Authenticatable implements FilamentUser, HasAvatar
 {
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, HasRoles;
     // HasAvatar aquí no es un trait, es una interfaz que se implementa
 
     /**

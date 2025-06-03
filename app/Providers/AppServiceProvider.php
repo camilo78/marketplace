@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
-use BezhanSalleh\FilamentLanguageSwitch\Enums\Placement;
+use Illuminate\Support\Facades\Gate;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -23,13 +23,20 @@ class AppServiceProvider extends ServiceProvider
     {
         LanguageSwitch::configureUsing(function (LanguageSwitch $switch) {
             $switch
-                ->locales(['es','en','pt_BR'])
+                ->locales(['es', 'en', 'pt_BR'])
                 ->circular()
-                 ->flags([
-                'es' => asset('storage/flags/es.png'),
-                'en' => asset('storage/flags/us.png'),
-                'pt_BR' => asset('storage/flags/br.png'),
-            ]);
+                ->flags([
+                    'es' => asset('storage/flags/es.png'),
+                    'en' => asset('storage/flags/us.png'),
+                    'pt_BR' => asset('storage/flags/br.png'),
+                ]);
+        });
+
+        Gate::before(function ($user, $ability) {
+            // Puedes usar el nombre del rol que asignaste en el seeder
+            if ($user->hasRole('Super-Admin')) {
+                return true;
+            }
         });
     }
 }
