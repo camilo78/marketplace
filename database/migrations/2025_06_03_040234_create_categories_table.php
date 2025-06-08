@@ -11,24 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+            Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255); // Nombre de la categoría (Ej: "Bienes Raíces")
-            $table->string('slug', 255)->unique(); // URL amigable (Ej: "bienes-raices")
-            $table->text('description')->nullable(); // Una descripción opcional
-
-            // La magia para las categorías anidadas:
-            // Esta columna guarda el ID de la categoría padre.
-            // Si es null, significa que es una categoría principal.
-            $table->foreignId('parent_id')
-                ->nullable()
-                ->constrained('categories') // Se relaciona con la misma tabla 'categories'
-                ->onUpdate('cascade')
-                ->onDelete('set null'); // Si se borra un padre, los hijos quedan como principales
-
-            $table->boolean('is_active')->default(true); // Para activar/desactivar categorías
+            $table->string('name', 255); // Nombre de la categoría
+            $table->string('slug', 255)->unique(); // URL amigable
+            $table->text('description')->nullable();
+            // Agregamos las columnas necesarias para Nested Set:
+            $table->nestedSet(); // Esto añade: parent_id, _lft y _rgt.
+            
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
+
     }
 
     /**

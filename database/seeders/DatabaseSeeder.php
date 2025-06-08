@@ -36,5 +36,8 @@ class DatabaseSeeder extends Seeder
         $this->call(RolesAndPermissionsSeeder::class);
           // Assign the Super-Admin role to Camilo Alvarado
         $user->assignRole($superAdminRole);
+
+        $this->call(CategorySeeder::class);
+
     }
 }
