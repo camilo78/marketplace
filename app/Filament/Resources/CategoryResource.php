@@ -42,6 +42,7 @@ class CategoryResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nombre')
                     ->sortable()
+                    ->searchable()
                     ->formatStateUsing(function (string $state, Category $record) {
                         $indent = str_repeat('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;', $record->depth);
                         $bullet = $record->depth > 0 ? '✦ &nbsp;&nbsp;' : '';
@@ -60,19 +61,19 @@ class CategoryResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ])
+            ])                
             ->recordClasses(function (Category $record): ?string {
-                if ($record->depth === -1) {
-                    return 'shadow-lg';
-                } elseif ($record->depth === 0) {
-                    return 'bg-gray-50 shadow-lg';
-                } elseif ($record->depth === 1) {
-                    return 'bg-gray-100 shadow-lg';
-                } elseif ($record->depth === 2) {
-                    return 'bg-gray-200 shadow-lg';
-                } else {
-                    return 'bg-gray-300 shadow-lg';
-                }
+                return match ($record->depth) {
+                    0 => 'bg-white dark:bg-gray-800 font-bold', // Categoría raíz
+                    1 => 'bg-gray-100 dark:bg-gray-700',          // Primer nivel de hijo
+                    2 => 'bg-gray-200 dark:bg-gray-600',          // Segundo nivel de hijo
+                    3 => 'bg-gray-300 dark:bg-gray-500',          // Tercer nivel de hijo
+                    4 => 'bg-gray-400 dark:bg-gray-400',          // Cuarto nivel: nivel extra 1
+                    5 => 'bg-gray-500 dark:bg-gray-300',          // Quinto nivel: nivel extra 2
+                    6 => 'bg-gray-600 dark:bg-gray-200',          // Sexto nivel: nivel extra 3
+                    default => 'bg-gray-100 dark:bg-gray-700',    // Fallback para otros casos
+                };
+
             })
             // El parámetro $newOrder tiene valor predeterminado para evitar inyección automática.
             ->reorderable(function (Category $record, $newOrder = null): void {
