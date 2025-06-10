@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Publication extends Model
 {
@@ -40,6 +41,14 @@ class Publication extends Model
         'expires_at' => 'datetime',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($publication) {
+            if (Auth::check()) {
+                $publication->user_id = Auth::id();
+            }
+        });
+    }
     /**
      * Relación con el usuario que creó la publicación.
      */
@@ -54,5 +63,15 @@ class Publication extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(PublicationImage::class);
+    }
+
+    public function coverImage()
+    {
+        return $this->hasOne(PublicationImage::class)->where('is_cover', true);
     }
 }

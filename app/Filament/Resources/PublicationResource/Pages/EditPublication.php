@@ -16,4 +16,20 @@ class EditPublication extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function afterSave(): void
+    {
+        $this->updateCoverImage();
+    }
+
+    // Misma función de ayuda
+    private function updateCoverImage(): void
+    {
+        $images = $this->record->images()->orderBy('order')->get();
+
+        foreach ($images as $index => $image) {
+            $image->is_cover = ($index === 0);
+            $image->save();
+        }
+    }
 }
